@@ -65,4 +65,14 @@ class Document extends \yii\db\ActiveRecord
     }
 
 
+    public function afterDelete() {
+        $this->deleteDocumentFiles();
+        parent::afterDelete();
+    }
+
+    protected function deleteDocumentFiles() {
+        foreach ($this->files as $file) {
+            $file->fileDelete();
+        }
+    }
 }

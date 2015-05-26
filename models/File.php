@@ -11,6 +11,7 @@ use Yii;
  * @property string $name
  * @property string $original_name
  * @property string $owner_id
+ * @property string $deleted
  *
  * @property Document $owner
  */
@@ -38,6 +39,7 @@ class File extends \yii\db\ActiveRecord
             [['owner_id'], 'integer'],
             [['name', 'original_name'], 'string', 'max' => 255],
             [['name'], 'unique'],
+            [['deleted'], 'boolean']
         ];
     }
 
@@ -51,6 +53,7 @@ class File extends \yii\db\ActiveRecord
             'name' => 'Name',
             'original_name' => 'Original Name',
             'owner_id' => 'Owner ID',
+            'deleted' => 'Удален'
         ];
     }
 
@@ -77,5 +80,11 @@ class File extends \yii\db\ActiveRecord
 
     public function getFilePath() {
         return self::getPath() . DIRECTORY_SEPARATOR . $this->name;
+    }
+
+
+    public function fileDelete() {
+        $this->deleted= 1;
+        return $this->save();
     }
 }

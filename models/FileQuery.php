@@ -15,6 +15,11 @@ class FileQuery extends \yii\db\ActiveQuery
         return $this;
     }*/
 
+    public function init() {
+        $this->andWhere('deleted = 0');
+        parent::init();
+    }
+
     /**
      * @inheritdoc
      * @return File[]|array
