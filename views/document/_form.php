@@ -12,50 +12,65 @@ UploadFileAsset::register($this);
 
 ?>
 
-<div class="document-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#document-form" aria-controls="document-form" role="tab"
+                                              data-toggle="tab">Documen form</a></li>
+    <li role="presentation"><a href="#document-files" aria-controls="document-files" role="tab"
+                               data-toggle="tab">Files</a></li>
+</ul>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+<!-- Tab panes -->
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="document-form">
+        <div class="document-form">
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+            <?php $form = ActiveForm::begin(); ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+            <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
+            <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-
-    <?php ActiveForm::end(); ?>
-
-
-    <?php
-    $url = \yii\helpers\Url::to(['/file/upload', 'id' => $model->id]);
-    $deleteUrl = \yii\helpers\Url::to(['/file/delete']);
+            <div class="form-group">
+                <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            </div>
 
 
-    $fileList = [];
-    foreach ($model->files as $file) {
-        $fileList[] = [
-            'id' => $file->id,
-            'name' => $file->original_name,
-            'thumb' => ($file->is_image) ?  \yii\helpers\Url::to(['/file/send', 'fileName' => $file->name]) : false,
-            'size' => $file->size
-        ];
-    }
 
-    $this->registerJs('
-        var uploadObj = new uploadFile("' . $url . '", "' . $deleteUrl .'", \'' . \yii\helpers\Json::encode($fileList) . '\' );
+            <?php ActiveForm::end(); ?>
 
-    ');
-
-    ?>
-
-    <form id="fileZone" action="<?= \yii\helpers\Url::to(['/file/upload', 'id' => $model->id])?>"  class="dropzone" >
-        <div class="fallback">
-            <input name="UploadForm[file]" type="file" multiple />
-            <input type="hidden" name="_csrf" value="<?= Yii::$app->getRequest()->getCsrfToken(); ?>"/>
         </div>
-    </form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="document-files">
+        <?php
+        $url = \yii\helpers\Url::to(['/file/upload', 'id' => $model->id]);
+        $deleteUrl = \yii\helpers\Url::to(['/file/delete']);
 
+
+        $fileList = [];
+        foreach ($model->files as $file) {
+            $fileList[] = [
+                'id' => $file->id,
+                'name' => $file->original_name,
+                'thumb' => ($file->is_image) ? \yii\helpers\Url::to(['/file/send', 'fileName' => $file->name]) : false,
+                'size' => $file->size
+            ];
+        }
+
+        $this->registerJs('
+             var uploadObj = new uploadFile("' . $url . '", "' . $deleteUrl . '", \'' . \yii\helpers\Json::encode($fileList) . '\' );
+        ');
+
+        ?>
+
+        <form id="fileZone" action="<?= \yii\helpers\Url::to(['/file/upload', 'id' => $model->id]) ?>" class="dropzone">
+            <div class="fallback">
+                <input name="UploadForm[file]" type="file" multiple/>
+                <input type="hidden" name="_csrf" value="<?= Yii::$app->getRequest()->getCsrfToken(); ?>"/>
+            </div>
+        </form>
+
+
+    </div>
 </div>

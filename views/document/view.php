@@ -40,7 +40,6 @@ $fileList = implode(PHP_EOL, $files);
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             'name',
             'description:ntext',
             [
