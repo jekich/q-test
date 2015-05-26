@@ -21,7 +21,6 @@ class m150523_195251_init extends Migration
         ]);
 
         $this->createIndex('name', 'file', 'name', true);
-        $this->addForeignKey('FK_file_document', 'file', 'owner_id', 'document', 'id', 'cascade', 'cascade');
     }
 
     public function down()

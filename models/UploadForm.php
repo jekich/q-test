@@ -22,6 +22,17 @@ class UploadForm extends Model
     public $file;
 
     /**
+     * @var File
+     */
+    private $model;
+
+    public function init()
+    {
+        parent::init();
+        $this->model = new  File();
+    }
+
+    /**
      * @return array the validation rules.
      */
     public function rules()
@@ -32,9 +43,11 @@ class UploadForm extends Model
         ];
     }
 
-    public function save() {
-        if ($this->file && $this->validate()) {
+    public function save()
+    {
+        $result = false;
 
+        if ($this->file && $this->validate()) {
             $result = true;
             $fileName = $this->generateName() . '.' . $this->file->extension;
             $path = File::getPath() . DIRECTORY_SEPARATOR . $fileName;
@@ -44,11 +57,13 @@ class UploadForm extends Model
             }
 
             if ($result) {
-                $model = new File();
-                $model->name = $fileName;
-                $model->original_name = $this->file->baseName . '.' . $this->file->extension;
-                $model->owner_id = $this->ownerId;
-                if (!$model->save()) {
+                $this->model->name = $fileName;
+                $this->model->original_name = $this->file->baseName . '.' . $this->file->extension;
+                $this->model->owner_id = $this->ownerId;
+                $this->model->size = $this->file->size;
+                $this->model->is_image = $this->isImage($path);
+
+                if (!$this->model->save()) {
                     if (file_exists($path)) {
                         unlink($path);
                     }
@@ -56,15 +71,28 @@ class UploadForm extends Model
                 }
             }
 
-        } else {
-            $error = $this->getErrors();
         }
 
-        return true;
+        return $result;
+    }
+
+    public function getFileModel()
+    {
+        return $this->model;
+    }
+
+    private function generateName()
+    {
+        return md5(microtime());
     }
 
 
-    private function generateName() {
-        return md5(microtime());
+    public function isImage($filename) {
+        $is = @getimagesize($filename);
+
+        if ( !$is )
+            return false;
+        else
+            return true;
     }
 }

@@ -9,12 +9,14 @@ class m150526_093346_update_file_table extends Migration
     {
 
         $this->addColumn('file', 'deleted', 'TINYINT(1) UNSIGNED NULL DEFAULT \'0\'');
-        $this->dropForeignKey('FK_file_document', 'file');
+        $this->addColumn('file', 'size', 'BIGINT(20) NULL DEFAULT \'0\'');
+        $this->addColumn('file', 'is_image', 'TINYINT(1) UNSIGNED NULL DEFAULT \'0\'');
     }
 
     public function down()
     {
         $this->dropColumn('file', 'deleted');
-        $this->addForeignKey('FK_file_document', 'file', 'owner_id', 'document', 'id', 'cascade', 'cascade');
+        $this->dropColumn('file', 'size');
+        $this->dropColumn('file', 'is_image');
     }
 }

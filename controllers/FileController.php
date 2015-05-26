@@ -5,7 +5,9 @@ namespace app\controllers;
 use Yii;
 use app\models\File;
 use app\models\FileSearch;
+use yii\helpers\Json;
 use yii\web\Controller;
+use yii\web\JsonResponseFormatter;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -45,16 +47,25 @@ class FileController extends Controller
 
         $model = new UploadForm();
 
+        $result = [
+            'status' => 'error',
+        ];
+
         if (Yii::$app->request->isPost) {
             $model->file = UploadedFile::getInstanceByName('file');
             $model->ownerId = $id;
 
-            if (!$model->save()) {
-                $error = $model->getErrors();
+            if ($model->save()) {
+                $result = [
+                    'status' => 'success',
+                    'data' => [
+                        'id' => $model->getFileModel()->id,
+                    ]
+                ];
             }
         }
 
-        return '';
+        return Json::encode($result);
     }
 
     /**
@@ -127,11 +138,15 @@ class FileController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete()
     {
-        $this->findModel($id)->delete();
+        if ($this->findModel(Yii::$app->request->post('id'))->fileDelete()) {
+            $result = ['status' => 'success'];
+        } else {
+            $result = ['status' => 'error'];
+        }
 
-        return $this->redirect(['index']);
+        return Json::encode($result);
     }
 
     /**

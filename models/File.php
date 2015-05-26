@@ -12,6 +12,8 @@ use Yii;
  * @property string $original_name
  * @property string $owner_id
  * @property string $deleted
+ * @property string $is_image
+ * @property string $size
  *
  * @property Document $owner
  */
@@ -36,10 +38,10 @@ class File extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'original_name', 'owner_id'], 'required'],
-            [['owner_id'], 'integer'],
+            [['owner_id', 'size'], 'integer'],
             [['name', 'original_name'], 'string', 'max' => 255],
             [['name'], 'unique'],
-            [['deleted'], 'boolean']
+            [['deleted', 'is_image'], 'boolean']
         ];
     }
 
@@ -53,7 +55,9 @@ class File extends \yii\db\ActiveRecord
             'name' => 'Name',
             'original_name' => 'Original Name',
             'owner_id' => 'Owner ID',
-            'deleted' => 'Удален'
+            'deleted' => 'Удален',
+            'is_image' => 'Изображение',
+            'size' => 'Размер'
         ];
     }
 
