@@ -55,9 +55,9 @@ class File extends \yii\db\ActiveRecord
             'name' => 'Name',
             'original_name' => 'Original Name',
             'owner_id' => 'Owner ID',
-            'deleted' => 'Удален',
-            'is_image' => 'Изображение',
-            'size' => 'Размер'
+            'deleted' => 'Deleted',
+            'is_image' => 'Image',
+            'size' => 'Size'
         ];
     }
 

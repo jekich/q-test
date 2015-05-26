@@ -10,11 +10,17 @@ use Yii;
  * @property string $id
  * @property string $name
  * @property string $description
+ * @property string $status
  *
  * @property File[] $files
  */
 class Document extends \yii\db\ActiveRecord
 {
+    const STATUS_TEMP = 0;
+    const STATUS_ACTIVE = 1;
+
+    const SCENARIO_TEMP = 'temp';
+
     /**
      * @inheritdoc
      */
@@ -29,7 +35,7 @@ class Document extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name'], 'required', 'on' => self::SCENARIO_DEFAULT],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 255]
         ];
@@ -44,6 +50,7 @@ class Document extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'description' => 'Description',
+            'status' => 'Status'
         ];
     }
 
@@ -74,5 +81,14 @@ class Document extends \yii\db\ActiveRecord
         foreach ($this->files as $file) {
             $file->fileDelete();
         }
+    }
+
+
+    public function beforeSave($insert) {
+        if ($this->getScenario() == self::SCENARIO_DEFAULT) {
+            $this->status = self::STATUS_ACTIVE;
+        }
+
+        return parent::beforeSave($insert);
     }
 }

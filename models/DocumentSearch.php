@@ -42,6 +42,9 @@ class DocumentSearch extends Document
     public function search($params)
     {
         $query = Document::find();
+        $query->andFilterWhere([
+            'status' => self::STATUS_ACTIVE
+        ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

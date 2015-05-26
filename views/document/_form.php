@@ -28,6 +28,8 @@ UploadFileAsset::register($this);
 
             <?php $form = ActiveForm::begin(); ?>
 
+            <?= $form->field($model, 'id')->hiddenInput() ?>
+
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>

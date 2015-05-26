@@ -49,7 +49,7 @@ class DocumentController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findActiveModel($id),
         ]);
     }
 
@@ -60,7 +60,16 @@ class DocumentController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Document();
+        $className = (new \ReflectionClass(Document::className()))->getShortName();
+
+        if (!empty($_POST[$className]['id'])) {
+            $model = $this->findModel($_POST[$className]['id']);
+        } else {
+            $model = new Document();
+            $model->setScenario(Document::SCENARIO_TEMP);
+            $model->save(false);
+            $model->setScenario(Document::SCENARIO_DEFAULT);
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -79,7 +88,7 @@ class DocumentController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findActiveModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -98,7 +107,7 @@ class DocumentController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $this->findActiveModel($id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -110,6 +119,15 @@ class DocumentController extends Controller
      * @return Document the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
+    protected function findActiveModel($id)
+    {
+        if (($model = Document::find()->active()->andWhere(['id' => $id])->one()) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
     protected function findModel($id)
     {
         if (($model = Document::findOne($id)) !== null) {

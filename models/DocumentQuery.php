@@ -9,11 +9,11 @@ namespace app\models;
  */
 class DocumentQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
+    public function active()
     {
-        $this->andWhere('[[status]]=1');
+        $this->andWhere(['status' => Document::STATUS_ACTIVE]);
         return $this;
-    }*/
+    }
 
     /**
      * @inheritdoc
